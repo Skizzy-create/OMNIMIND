@@ -1,0 +1,134 @@
+/* Simple Black & White Theme */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  color: #000000;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Simple scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Simple containers */
+.container {
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 4px;
+}
+
+.container-dark {
+  background: #000000;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+}
+
+/* Simple buttons */
+.btn {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: normal;
+  cursor: pointer;
+  transition: none;
+}
+
+.btn:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.btn-secondary:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Simple progress bar */
+.progress-bar {
+  background: #f1f1f1;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: #000000;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* Simple upload area */
+.upload-area {
+  border: 2px dashed #000000;
+  background: #ffffff;
+  transition: none;
+}
+
+.upload-area:hover {
+  background: #f9f9f9;
+}
+
+.upload-area.drag-active {
+  background: #f0f0f0;
+  border-color: #333333;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+}
+
+/* Focus states */
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/* Loading spinner */
+.spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #000000;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

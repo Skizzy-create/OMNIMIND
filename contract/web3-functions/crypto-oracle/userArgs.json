@@ -1,0 +1,5 @@
+{
+  "cryptoSymbols": ["bitcoin", "ethereum", "cardano"],
+  "updateInterval": "600",
+  "oracleAddress": "0x71B9B0F6C999CBbB0FeF9c92B80D54e4973214da"
+}
