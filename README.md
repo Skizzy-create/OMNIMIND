@@ -1,2 +1,2 @@
 # dAI-Vault
-dAI Vault is a decentralized AI data and compute layer and chain-agnostic infrastructure layer for Web3 AI.
+dAI Vault is a decentralized AI data and compute layer where users upload raw unstructured data (PDFs, videos, audio) stored efficiently on Walrus, while processed embeddings and vector representations are stored on Akave O3 for fast S3-compatible access, and all embedding indices, knowledge graphs, and calibration metadata are anchored on Filecoin warm storage via Synapse SDK, enabling verifiable storage, pay-per-query retrieval, and seamless wallet-authenticated access for developers who can either use our hosted models or bring their own, making dAI Vault a universal and chain-agnostic infrastructure layer for Web3 AI.
