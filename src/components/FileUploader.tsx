@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { Upload, File, X, CheckCircle, AlertCircle, Download, Zap, Clock } from 'lucide-react';
 import { WalrusService, UploadProgress, WalrusFile } from '../services/walrusService';
 import { EmbeddingService, EmbeddingResponse } from '../services/embeddingService';
+import { ContractService, UploadData } from '../services/contractService';
 import { ethers } from 'ethers';
 
 interface FileUploaderProps {
@@ -12,6 +13,10 @@ interface ProcessingState {
   isProcessing: boolean;
   processingType: 'fast' | 'slow' | null;
   embeddingData: EmbeddingResponse | null;
+  contractData: {
+    datasetId: number;
+    transactionHash: string;
+  } | null;
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
@@ -24,12 +29,14 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
   const [processingState, setProcessingState] = useState<ProcessingState>({
     isProcessing: false,
     processingType: null,
-    embeddingData: null
+    embeddingData: null,
+    contractData: null
   });
   
   const inputRef = useRef<HTMLInputElement>(null);
   const walrusService = useRef<WalrusService | null>(null);
   const embeddingService = useRef<EmbeddingService>(new EmbeddingService());
+  const contractService = useRef<ContractService>(new ContractService());
 
   // Initialize Walrus service with your SUI address
   React.useEffect(() => {
@@ -96,7 +103,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
     setProcessingState({
       isProcessing: true,
       processingType,
-      embeddingData: null
+      embeddingData: null,
+      contractData: null
     });
     setError(null);
     setUploadProgress(null);
@@ -167,25 +175,70 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
         }
       };
 
+      // Step 3: Register in smart contract
+      setUploadProgress({
+        loaded: 100,
+        total: 100,
+        percentage: 100,
+        progress: 100,
+        message: 'Registering in smart contract...',
+        phase: 'Contract'
+      });
+
+      // Connect to wallet if not already connected
+      if (!contractService.current.isConnected()) {
+        await contractService.current.connectWallet();
+      }
+
+      // Prepare upload data for contract
+      const uploadData: UploadData = {
+        blobId: walrusFile.blobId || '',
+        dataId: embeddingResponse.data_id,
+        datasetHash: datasetHash,
+        fileName: selectedFile.name,
+        fileSize: selectedFile.size,
+        processingType
+      };
+
+      // Register dataset in contract
+      const datasetId = await contractService.current.registerDataset(uploadData);
+      
+      // Verify the dataset
+      await contractService.current.verifyDataset(datasetId);
+
       setProcessingState({
         isProcessing: false,
         processingType: null,
-        embeddingData: embeddingResponse
+        embeddingData: embeddingResponse,
+        contractData: {
+          datasetId,
+          transactionHash: 'Contract transaction completed'
+        }
       });
 
-      setUploadedFiles(prev => [walrusFileWithEmbedding, ...prev]);
+      // Add contract data to walrus file
+      const walrusFileWithContract = {
+        ...walrusFileWithEmbedding,
+        contractData: {
+          datasetId,
+          transactionHash: 'Contract transaction completed'
+        }
+      };
+
+      setUploadedFiles(prev => [walrusFileWithContract, ...prev]);
       setSelectedFile(null);
       if (inputRef.current) {
         inputRef.current.value = '';
       }
       
-      onUploadComplete?.(walrusFileWithEmbedding, embeddingResponse);
+      onUploadComplete?.(walrusFileWithContract, embeddingResponse);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
       setProcessingState({
         isProcessing: false,
         processingType: null,
-        embeddingData: null
+        embeddingData: null,
+        contractData: null
       });
     } finally {
       setUploading(false);
@@ -221,13 +274,53 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
       const datasetHash = ethers.keccak256(ethers.toUtf8Bytes(dataset));
       console.log('Dataset Hash:', datasetHash);
 
-      setUploadedFiles(prev => [walrusFile, ...prev]);
+      // Register in smart contract (without embedding data)
+      setUploadProgress({
+        loaded: 100,
+        total: 100,
+        percentage: 100,
+        progress: 100,
+        message: 'Registering in smart contract...',
+        phase: 'Contract'
+      });
+
+      // Connect to wallet if not already connected
+      if (!contractService.current.isConnected()) {
+        await contractService.current.connectWallet();
+      }
+
+      // Prepare upload data for contract
+      const uploadData: UploadData = {
+        blobId: walrusFile.blobId || '',
+        dataId: '', // No embedding data for simple upload
+        datasetHash: datasetHash,
+        fileName: selectedFile.name,
+        fileSize: selectedFile.size,
+        processingType: 'fast' // Default to fast for simple upload
+      };
+
+      // Register dataset in contract
+      const datasetId = await contractService.current.registerDataset(uploadData);
+      
+      // Verify the dataset
+      await contractService.current.verifyDataset(datasetId);
+
+      // Add contract data to walrus file
+      const walrusFileWithContract = {
+        ...walrusFile,
+        contractData: {
+          datasetId,
+          transactionHash: 'Contract transaction completed'
+        }
+      };
+
+      setUploadedFiles(prev => [walrusFileWithContract, ...prev]);
       setSelectedFile(null);
       if (inputRef.current) {
         inputRef.current.value = '';
       }
       
-      onUploadComplete?.(walrusFile);
+      onUploadComplete?.(walrusFileWithContract);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
@@ -294,7 +387,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
                 marginBottom: '0.5rem'
               }}
             >
-              Upload Dataset to DAIVault
+              Upload Dataset to OmniMind
             </h2>
             <p 
               className="text-gray"
@@ -549,6 +642,11 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
                           Data ID: {file.embeddingData.data_id} ({file.embeddingData.processingType})
                         </p>
                       )}
+                      {file.contractData && (
+                        <p className="text-xs text-blue-600 font-medium">
+                          Dataset ID: {file.contractData.datasetId} • Contract: {file.contractData.transactionHash.substring(0, 10)}...
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -597,6 +695,23 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
                         }}
                       >
                         Copy Data ID
+                      </button>
+                    )}
+                    {file.contractData && (
+                      <button
+                        onClick={() => {
+                          if (file.contractData?.datasetId) {
+                            navigator.clipboard.writeText(file.contractData.datasetId.toString());
+                          }
+                        }}
+                        className="px-4 py-2 border text-sm"
+                        style={{ 
+                          background: '#3b82f6', 
+                          border: '1px solid #000000',
+                          color: '#ffffff'
+                        }}
+                      >
+                        Copy Dataset ID
                       </button>
                     )}
                   </div>

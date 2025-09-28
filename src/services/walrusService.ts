@@ -24,6 +24,10 @@ export interface WalrusFile {
     data_id: string;
     processingType: 'fast' | 'slow';
   };
+  contractData?: {
+    datasetId: number;
+    transactionHash: string;
+  };
 }
 
 // Walrus Service class

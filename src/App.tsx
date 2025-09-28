@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import FileUploader from './components/FileUploader';
 import WalletConnect from './components/WalletConnect';
 import DataMarketplace from './components/DataMarketplace';
+import PresentationApp from './components/PresentationApp';
 import { walrusClient, WalrusFile } from './services/walrusService';
 import './App.css';
 
 function App() {
-  const [totalUploads, setTotalUploads] = useState(0);
-  const [currentPage, setCurrentPage] = useState<'upload' | 'marketplace'>('upload');
+  const [currentPage, setCurrentPage] = useState<'upload' | 'marketplace' | 'presentation'>('upload');
 
   // Test Walrus service on component mount
   useEffect(() => {
@@ -24,7 +24,6 @@ function App() {
   }, []);
 
   const handleUploadComplete = (file: WalrusFile) => {
-    setTotalUploads(prev => prev + 1);
     console.log('File uploaded successfully:', file);
   };
 
@@ -70,6 +69,23 @@ function App() {
               >
                 Data Marketplace
               </button>
+              <button
+                onClick={() => setCurrentPage('presentation')}
+                className={`px-6 py-2 border font-semibold ${
+                  currentPage === 'presentation' 
+                    ? 'bg-black text-white' 
+                    : 'bg-white text-black hover:bg-gray-50'
+                }`}
+                style={{
+                  background: currentPage === 'presentation' ? '#000000' : '#ffffff',
+                  color: currentPage === 'presentation' ? '#ffffff' : '#000000',
+                  border: '1px solid #000000',
+                  padding: '0.5rem 1.5rem',
+                  fontWeight: '600'
+                }}
+              >
+                Pitch Deck
+              </button>
             </div>
             
             {/* Right side - Wallet Connect Button */}
@@ -78,10 +94,12 @@ function App() {
             </div>
           </div>
           <div className="text-center">
-           
-         
-            
-         
+            <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#000000', marginBottom: '0.5rem' }}>
+              OmniMind Protocol
+            </h1>
+            <p style={{ fontSize: '1rem', color: '#000000', fontWeight: '500' }}>
+              Web3's Universal Knowledge Infrastructure Layer
+            </p>
           </div>
         </div>
       </header>
@@ -91,105 +109,11 @@ function App() {
         {currentPage === 'upload' ? (
           <>
             <FileUploader onUploadComplete={handleUploadComplete} />
-            
-            {/* Features Section */}
-            <div className="mt-16 grid md:grid-cols-2 gap-8">
-          {/* Features Card */}
-          <div className="border p-8" style={{ background: '#ffffff', border: '1px solid #000000' }}>
-            <div className="flex items-center mb-6">
-              <div className="w-10 h-10 border flex items-center justify-center mr-4" style={{ background: '#000000', color: '#ffffff' }}>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#ffffff' }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold">Key Features</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <div className="w-2 h-2 mt-2 mr-4 flex-shrink-0" style={{ background: '#000000' }}></div>
-                <div>
-                  <h3 className="font-semibold">Decentralized Storage</h3>
-                  <p className="text-sm text-gray">High availability across distributed nodes</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <div className="w-2 h-2 mt-2 mr-4 flex-shrink-0" style={{ background: '#000000' }}></div>
-                <div>
-                  <h3 className="font-semibold">Cryptographic Proofs</h3>
-                  <p className="text-sm text-gray">zkTLS proofs ensure data integrity</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <div className="w-2 h-2 mt-2 mr-4 flex-shrink-0" style={{ background: '#000000' }}></div>
-                <div>
-                  <h3 className="font-semibold">Fault Tolerance</h3>
-                  <p className="text-sm text-gray">Efficient erasure coding for reliability</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <div className="w-2 h-2 mt-2 mr-4 flex-shrink-0" style={{ background: '#000000' }}></div>
-                <div>
-                  <h3 className="font-semibold">Sui Integration</h3>
-                  <p className="text-sm text-gray">Native blockchain integration</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Technical Details Card */}
-          <div className="border p-8" style={{ background: '#ffffff', border: '1px solid #000000' }}>
-            <div className="flex items-center mb-6">
-              <div className="w-10 h-10 border flex items-center justify-center mr-4" style={{ background: '#000000', color: '#ffffff' }}>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#ffffff' }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold">How It Works</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <div className="w-8 h-8 border flex items-center justify-center font-bold text-sm mr-4 flex-shrink-0" style={{ background: '#000000', color: '#ffffff' }}>1</div>
-                <div>
-                  <h3 className="font-semibold">Encode & Split</h3>
-                  <p className="text-sm text-gray">Files are encoded and distributed across nodes</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <div className="w-8 h-8 border flex items-center justify-center font-bold text-sm mr-4 flex-shrink-0" style={{ background: '#000000', color: '#ffffff' }}>2</div>
-                <div>
-                  <h3 className="font-semibold">Blockchain Registration</h3>
-                  <p className="text-sm text-gray">Blob IDs are registered on Sui blockchain</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <div className="w-8 h-8 border flex items-center justify-center font-bold text-sm mr-4 flex-shrink-0" style={{ background: '#000000', color: '#ffffff' }}>3</div>
-                <div>
-                  <h3 className="font-semibold">Certification</h3>
-                  <p className="text-sm text-gray">Uploads are certified with cryptographic proofs</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <div className="w-8 h-8 border flex items-center justify-center font-bold text-sm mr-4 flex-shrink-0" style={{ background: '#000000', color: '#ffffff' }}>4</div>
-                <div>
-                  <h3 className="font-semibold">Permanent Access</h3>
-                  <p className="text-sm text-gray">Blob IDs provide permanent, verifiable access</p>
-                </div>
-              </div>
-            </div>
-          </div>
-            </div>
-
-            {/* Footer */}
-            <footer className="mt-16 text-center py-8">
-              <p className="text-gray">
-                Powered by <span className="font-semibold">Walrus Protocol</span> • 
-                Built on <span className="font-semibold">Sui Blockchain</span>
-              </p>
-            </footer>
           </>
-        ) : (
+        ) : currentPage === 'marketplace' ? (
           <DataMarketplace />
+        ) : (
+          <PresentationApp />
         )}
       </main>
     </div>

@@ -27,7 +27,7 @@ this.walrusClient = new WalrusClient({
 
 ## 🎉 Ready to Use!
 
-Your Walrus File Storage Frontend is now ready:
+Your OmniMind Protocol frontend is now ready:
 
 - ✅ Dependencies installed and configured
 - ✅ Development server running
@@ -45,6 +45,7 @@ If you encounter any issues:
 
 ## 📱 Features Available
 
+- Interactive pitch deck presentation
 - Drag & drop file upload
 - Real-time upload progress tracking
 - File management with download links

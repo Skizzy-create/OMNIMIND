@@ -8,13 +8,15 @@ import "../src/DummyVerifier.sol";
 import "../src/AccessManager.sol";
 import "../src/DataCoin.sol";
 
-contract DeployLocal is Script {
+contract DeployFilecoinTestnet is Script {
     function run() external {
-        // Use the first account from the default Anvil accounts
-        address deployer = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
-        uint256 deployerPrivateKey = 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
+        // Get deployer private key from environment
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployer = vm.addr(deployerPrivateKey);
 
-        console.log("Deploying contracts locally with account:", deployer);
+        console.log("Deploying to Filecoin Testnet with account:", deployer);
+        console.log("Account balance:", deployer.balance);
+        console.log("Chain ID:", block.chainid);
 
         vm.startBroadcast(deployerPrivateKey);
 
@@ -58,19 +60,19 @@ contract DeployLocal is Script {
         
         // Register a test dataset
         dataRegistry.registerDataset(
-            "Sample Dataset", 
-            "QmSampleHash123456789"
+            "Filecoin Testnet Dataset", 
+            "QmFilecoinTestnetHash123456789"
         );
-        console.log("Sample dataset registered with ID: 1");
+        console.log("Test dataset registered with ID: 1");
 
         // Verify the dataset
         dataRegistry.verifyDataset(1);
-        console.log("Sample dataset verified");
+        console.log("Test dataset verified");
 
         vm.stopBroadcast();
 
         // Display final state
-        console.log("\n=== Deployment Summary ===");
+        console.log("\n=== Filecoin Testnet Deployment Summary ===");
         console.log("DataCoin: ", address(dataCoin));
         console.log("DataNFT: ", address(dataNFT));
         console.log("DummyVerifier: ", address(verifier));
@@ -78,5 +80,6 @@ contract DeployLocal is Script {
         console.log("DataRegistry: ", address(dataRegistry));
         console.log("\nDataset count:", dataRegistry.datasetCount());
         console.log("Deployer DataCoin balance:", dataCoin.balanceOf(deployer));
+        console.log("Deployment completed successfully on Filecoin Testnet!");
     }
 }
