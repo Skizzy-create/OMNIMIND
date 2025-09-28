@@ -1,0 +1,340 @@
+{
+    "info": {
+        "name": "Multimodal Demo Server API",
+        "_postman_id": "c2a7f7f8-4f7a-4e3a-9c16-000000000001",
+        "description": "Collection covering embeddings+KG storage, image to data_id, and RAG by data_id.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://81.15.150.181"
+        },
+        {
+            "key": "sampleDataId",
+            "value": "<EMBED_CID>::mongo:knowledge_graphs/<MONGO_ID>"
+        }
+    ],
+    "item": [
+        {
+            "name": "Diagnostics",
+            "item": [
+                {
+                    "name": "Health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Test Mistral",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"system_prompt\": \"You are a helpful assistant.\",\n  \"user_prompt\": \"Say hello from the server.\",\n  \"max_tokens\": 128\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/test/mistral",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "test",
+                                "mistral"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Embeddings + KG (Store-only)",
+            "item": [
+                {
+                    "name": "Embed Small (store KG + embeddings, return data_id)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"texts\": [\n    \"PostgreSQL is a powerful open-source relational database.\",\n    \"Vector search pairs well with knowledge graphs.\"\n  ],\n  \"batch_size\": 64,\n  \"kg_id\": \"optional-custom-kg-id\",\n  \"kg_prefix\": \"kg/text/\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/embed/small",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "embed",
+                                "small"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Embed Large (store KG + embeddings, return data_id)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"texts\": [\n    \"MLOps integrates ML with DevOps for reliable model delivery.\",\n    \"RAG uses retrieval of context to improve generation accuracy.\"\n  ],\n  \"batch_size\": 32,\n  \"kg_prefix\": \"kg/text/\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/embed/large",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "embed",
+                                "large"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Images → data_id",
+            "item": [
+                {
+                    "name": "Image to data_id (very detailed description → KG + embeddings stored)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"image\": \"BASE64_IMAGE_HERE\",\n  \"kg_id\": \"optional-image-kg-id\",\n  \"kg_prefix\": \"kg/image/\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/image/to_data_id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "image",
+                                "to_data_id"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Process Image and Embed (legacy helper)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"image\": \"BASE64_IMAGE_HERE\",\n  \"system_prompt\": \"You are an image analysis assistant.\",\n  \"user_prompt\": \"Provide a detailed description of this image.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/process_image_and_embed",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "process_image_and_embed"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "RAG",
+            "item": [
+                {
+                    "name": "RAG by data_id (fetch KG + embeddings and answer)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"data_id\": \"{{sampleDataId}}\",\n  \"query\": \"How does the system leverage knowledge graphs in retrieval?\",\n  \"top_k\": 5\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/rag/by_id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "by_id"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "RAG (precomputed embeddings) - legacy helper",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is RAG?\",\n  \"context_embeddings\": [[0.1, 0.2, 0.3], [0.05, 0.04, 0.03]],\n  \"context_texts\": [\"RAG stands for Retrieval-Augmented Generation.\", \"RAG combines retrieval with generation for better answers.\"],\n  \"top_k\": 2\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/rag_query",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "rag_query"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Advanced (optional)",
+            "item": [
+                {
+                    "name": "Embed and Query Advanced (mixed media)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Summarize the content.\",\n  \"context\": [\"This is a sample paragraph about graph databases.\"],\n  \"images\": [\"BASE64_IMAGE_HERE\"],\n  \"pdf_content\": \"\",\n  \"top_k\": 3,\n  \"return_embeddings\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/embed_and_query_advanced",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "embed_and_query_advanced"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Process Media (via URL)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "url",
+                                    "value": "https://example.com/sample.jpg",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "system_prompt",
+                                    "value": "You are a helpful assistant. Use the analysis provided to answer the user's question.",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "user_prompt",
+                                    "value": "Please answer based on the provided media.",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/process/media",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "process",
+                                "media"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Process Media (upload file)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": "/path/to/local/sample.png"
+                                },
+                                {
+                                    "key": "system_prompt",
+                                    "value": "You are a helpful assistant. Use the analysis provided to answer the user's question.",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "user_prompt",
+                                    "value": "Please answer based on the provided media.",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/process/media",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "process",
+                                "media"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
