@@ -4,7 +4,7 @@ const SolutionSlide: React.FC = () => {
   return (
     <div className="slide">
       <h1 className="slide-title">
-        dAI-Vault: Universal Knowledge Infrastructure
+        OmniMind: Universal Knowledge Infrastructure
       </h1>
       
       <div className="slide-content-section">
@@ -54,11 +54,13 @@ const SolutionSlide: React.FC = () => {
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center',
-          margin: '2rem 0',
+          margin: '2rem auto',
           padding: '1rem',
           background: '#ffffff',
           border: '2px solid #000000',
-          borderRadius: '4px'
+          borderRadius: '4px',
+          width: '100%',
+          maxWidth: '1000px'
         }}>
           <div style={{ 
             display: 'grid', 
@@ -87,7 +89,7 @@ const SolutionSlide: React.FC = () => {
               color: '#ffffff'
             }}>
               <div style={{ fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.5rem' }}>
-                dAI-Vault API
+                OmniMind API
               </div>
               <div style={{ fontSize: '0.7rem' }}>FastAPI + RAG</div>
             </div>
@@ -111,7 +113,10 @@ const SolutionSlide: React.FC = () => {
           gridTemplateColumns: 'repeat(4, 1fr)', 
           gap: '0.5rem',
           textAlign: 'center',
-          marginTop: '1rem'
+          marginTop: '1rem',
+          width: '100%',
+          maxWidth: '800px',
+          margin: '1rem auto 0'
         }}>
           <div style={{ 
             border: '1px solid #000000', 

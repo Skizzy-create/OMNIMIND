@@ -4,105 +4,106 @@ const GrowthSlide: React.FC = () => {
   return (
     <div className="slide">
       <h1 className="slide-title">
-        Path to $100M ARR in 4 Years
+        Path to Web3 AI Dominance
       </h1>
       
       <div className="slide-content-section">
-        <h3>Revenue Projections:</h3>
-        <div style={{ 
-          background: '#f8f9fa',
-          padding: '2rem',
-          borderRadius: '15px',
-          border: '2px solid #667eea',
-          marginBottom: '2rem'
-        }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', textAlign: 'center' }}>
-            <div>
-              <div className="stat-number" style={{ fontSize: '2rem' }}>2025</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: '600', color: '#333' }}>1,000</div>
-              <div style={{ fontSize: '0.9rem', color: '#666' }}>Active Agents</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#000000' }}>$600K</div>
-              <div style={{ fontSize: '0.8rem', color: '#666' }}>Annual Revenue</div>
-            </div>
-            <div>
-              <div className="stat-number" style={{ fontSize: '2rem' }}>2026</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: '600', color: '#333' }}>10,000</div>
-              <div style={{ fontSize: '0.9rem', color: '#666' }}>Active Agents</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#000000' }}>$9M</div>
-              <div style={{ fontSize: '0.8rem', color: '#666' }}>Annual Revenue</div>
-            </div>
-            <div>
-              <div className="stat-number" style={{ fontSize: '2rem' }}>2027</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: '600', color: '#333' }}>50,000</div>
-              <div style={{ fontSize: '0.9rem', color: '#666' }}>Active Agents</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#000000' }}>$90M</div>
-              <div style={{ fontSize: '0.8rem', color: '#666' }}>Annual Revenue</div>
-            </div>
-            <div>
-              <div className="stat-number" style={{ fontSize: '2rem' }}>2028</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: '600', color: '#333' }}>200,000</div>
-              <div style={{ fontSize: '0.9rem', color: '#666' }}>Active Agents</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#000000' }}>$360M</div>
-              <div style={{ fontSize: '0.8rem', color: '#666' }}>Annual Revenue</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="slide-content-section">
-        <h3>Go-to-Market Strategy:</h3>
+        <h3>Roadmap:</h3>
+        
         <div className="grid-3">
           <div className="card" style={{ borderLeft: '4px solid #000000' }}>
-            <h4>Phase 1: Developer-First</h4>
-            <p><strong>Months 1-6</strong></p>
+            <h4>Phase 1: Foundation ✅</h4>
+            <p><strong>(Current)</strong></p>
             <ul style={{ fontSize: '0.9rem' }}>
-              <li>Target existing 10,000+ Web3 AI agents</li>
-              <li>Integration partnerships with Virtuals Protocol, Fetch.ai</li>
-              <li>Developer tools & SDKs</li>
-              <li>ETHGlobal hackathon presence</li>
+              <li>Multi-modal processing pipeline</li>
+              <li>Knowledge graph generation</li>
+              <li>Decentralized storage integration</li>
+              <li>RAG query system</li>
+              <li>Comprehensive API</li>
             </ul>
           </div>
-          <div className="card" style={{ borderLeft: '4px solid #fdcb6e' }}>
-            <h4>Phase 2: Vertical Expansion</h4>
-            <p><strong>Months 6-12</strong></p>
+          <div className="card" style={{ borderLeft: '4px solid #000000' }}>
+            <h4>Phase 2: Scale 🔄</h4>
+            <p><strong>(Q1 2025)</strong></p>
             <ul style={{ fontSize: '0.9rem' }}>
-              <li>DeFi agents: Market analysis, protocol intelligence</li>
-              <li>Governance agents: Proposal context, voting intelligence</li>
-              <li>Trading agents: Multi-source market data</li>
+              <li>Wallet authentication & payments</li>
+              <li>Cross-chain deployment</li>
+              <li>Enterprise partnerships</li>
+              <li>Developer SDK release</li>
             </ul>
           </div>
-          <div className="card" style={{ borderLeft: '4px solid #e17055' }}>
-            <h4>Phase 3: Platform Standard</h4>
-            <p><strong>Year 2+</strong></p>
+          <div className="card" style={{ borderLeft: '4px solid #000000' }}>
+            <h4>Phase 3: Ecosystem 📋</h4>
+            <p><strong>(Q2-Q3 2025)</strong></p>
             <ul style={{ fontSize: '0.9rem' }}>
-              <li>Become default knowledge layer for Web3 AI</li>
-              <li>Cross-chain expansion (Ethereum, Solana, Base)</li>
-              <li>Enterprise partnerships with Web2 AI companies</li>
+              <li>AI agent marketplace integration</li>
+              <li>Community governance launch</li>
+              <li>Advanced analytics platform</li>
+              <li>Global developer adoption</li>
             </ul>
           </div>
         </div>
       </div>
 
       <div className="slide-content-section">
-        <h3>The Vision:</h3>
+        <h3>Use Cases:</h3>
         <div className="grid-2">
           <div className="card">
-            <h4>Short-term (12 months)</h4>
-            <p><strong>The Standard Knowledge Layer</strong></p>
-            <ul>
-              <li>10,000+ AI agents using OmniMind</li>
-              <li>100+ data providers monetizing knowledge</li>
-              <li>Cross-chain presence</li>
+            <h4>DeFi Agents</h4>
+            <ul style={{ fontSize: '0.9rem' }}>
+              <li><strong>Market Analysis:</strong> Real-time protocol intelligence</li>
+              <li><strong>Risk Assessment:</strong> Multi-source data aggregation</li>
+              <li><strong>Yield Optimization:</strong> Historical performance analysis</li>
             </ul>
           </div>
           <div className="card">
-            <h4>Long-term (5+ years)</h4>
-            <p><strong>Web3's Neural Network</strong></p>
-            <ul>
-              <li>Universal knowledge layer for all Web3 apps</li>
-              <li>Cross-domain intelligence connecting DeFi, governance, gaming</li>
-              <li>The infrastructure that makes Web3 truly intelligent</li>
+            <h4>Governance Agents</h4>
+            <ul style={{ fontSize: '0.9rem' }}>
+              <li><strong>Proposal Context:</strong> Comprehensive background research</li>
+              <li><strong>Voting Intelligence:</strong> Impact analysis and recommendations</li>
+              <li><strong>Community Insights:</strong> Sentiment and trend analysis</li>
             </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="slide-content-section">
+        <h3>Competitive Advantage:</h3>
+        <div style={{ 
+          background: '#ffffff',
+          padding: '1rem',
+          borderRadius: '4px',
+          border: '2px solid #000000',
+          marginBottom: '1rem',
+          width: '100%',
+          maxWidth: '1000px'
+        }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '1fr 1fr', 
+            gap: '1rem', 
+            fontSize: '0.9rem',
+            textAlign: 'left'
+          }}>
+            <div>
+              <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem', textAlign: 'center' }}>Current Limitations:</h4>
+              <ul>
+                <li>Virtuals Protocol: Agent frameworks only</li>
+                <li>Fetch.ai: Compute marketplace, no knowledge</li>
+                <li>SingularityNET: Model trading, no knowledge graphs</li>
+                <li>OpenAI/Anthropic: Centralized, expensive</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem', textAlign: 'center' }}>Our Differentiation:</h4>
+              <ul>
+                <li>✅ Decentralized storage multi-protocol</li>
+                <li>✅ Automatic knowledge graphs</li>
+                <li>✅ Multi-modal processing</li>
+                <li>✅ Pay-per-query economics</li>
+                <li>✅ Chain-agnostic universal</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -116,11 +117,10 @@ const GrowthSlide: React.FC = () => {
         textAlign: 'center'
       }}>
         <h3 style={{ color: '#000000', marginBottom: '1rem' }}>
-          The Impact
+          The Vision
         </h3>
-        <p style={{ fontSize: '1rem', fontStyle: 'italic', marginBottom: '1rem' }}>
-          "Just as Chainlink made smart contracts reliable,<br />
-          OmniMind will make AI agents intelligent."
+        <p style={{ fontSize: '1.2rem', fontStyle: 'italic', marginBottom: '1rem' }}>
+          "The Standard Knowledge Layer for Web3 AI"
         </p>
         <div style={{ 
           display: 'flex', 
@@ -130,16 +130,16 @@ const GrowthSlide: React.FC = () => {
           flexWrap: 'wrap'
         }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: '800' }}>85%</div>
-            <div style={{ fontSize: '0.8rem' }}>Gross Margin</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: '800' }}>&lt;1s</div>
+            <div style={{ fontSize: '0.8rem' }}>Query Latency</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '1.5rem', fontWeight: '800' }}>99.9%</div>
             <div style={{ fontSize: '0.8rem' }}>Uptime</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', fontWeight: '800' }}>&lt;1s</div>
-            <div style={{ fontSize: '0.8rem' }}>Query Latency</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: '800' }}>1000+</div>
+            <div style={{ fontSize: '0.8rem' }}>Queries/Min</div>
           </div>
         </div>
       </div>
@@ -153,10 +153,10 @@ const GrowthSlide: React.FC = () => {
         border: '2px solid #000000'
       }}>
         <h4 style={{ color: '#000000', marginBottom: '1rem' }}>
-          We're Raising: $2M Seed Round
+          Ready for Integration
         </h4>
         <p style={{ fontSize: '1rem', color: '#000000', marginBottom: '0.5rem' }}>
-          <strong>60% Engineering</strong> • <strong>20% Business Development</strong> • <strong>10% Infrastructure</strong> • <strong>10% Operations</strong>
+          <strong>Live API Available</strong> • <strong>Comprehensive Documentation</strong> • <strong>Working Examples</strong>
         </p>
         <p style={{ fontSize: '0.9rem', color: '#000000', fontStyle: 'italic' }}>
           This is the Chainlink moment for AI knowledge

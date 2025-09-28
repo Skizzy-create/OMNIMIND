@@ -95,10 +95,10 @@ function App() {
           </div>
           <div className="text-center">
             <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#000000', marginBottom: '0.5rem' }}>
-              OmniMind Protocol
+              OmniMind
             </h1>
             <p style={{ fontSize: '1rem', color: '#000000', fontWeight: '500' }}>
-              Web3's Universal Knowledge Infrastructure Layer
+              Decentralized AI Knowledge Infrastructure
             </p>
           </div>
         </div>
@@ -111,7 +111,7 @@ function App() {
             <FileUploader onUploadComplete={handleUploadComplete} />
           </>
         ) : currentPage === 'marketplace' ? (
-          <DataMarketplace />
+          <DataMarketplace setCurrentPage={setCurrentPage} />
         ) : (
           <PresentationApp />
         )}

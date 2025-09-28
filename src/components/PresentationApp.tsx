@@ -52,9 +52,9 @@ const PresentationNavigator: React.FC = () => {
     }
   };
 
-  const goToSlide = (index: number) => {
-    navigate(slides[index].path);
-  };
+  // const goToSlide = (index: number) => {
+  //   navigate(slides[index].path);
+  // };
 
   // Keyboard navigation
   useEffect(() => {

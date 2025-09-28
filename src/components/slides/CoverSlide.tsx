@@ -5,7 +5,7 @@ const CoverSlide: React.FC = () => {
     <div className="slide">
       <div className="text-center">
         <h1 className="slide-title">
-          dAI-Vault
+          OmniMind
         </h1>
         
         <div className="slide-subtitle">

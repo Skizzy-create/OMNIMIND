@@ -8,38 +8,25 @@ set -e
 echo "🚀 Deploying dAI-Vault to Filecoin Calibration Testnet with Fixed Gas Settings"
 echo "=================================================================="
 
-# Check if .env file exists
-if [ ! -f .env ]; then
-    echo "❌ Error: .env file not found!"
-    echo "Please create a .env file with your PRIVATE_KEY"
-    exit 1
-fi
+# Set private key directly (replace with your actual private key)
+export PRIVATE_KEY="0x41c80d358529c1ecddb851ef91cc44739bf7cac3f2910147e791f815b623312c"
 
-# Load environment variables
-source .env
+# Set optional Etherscan API key for verification (can be left empty)
+export ETHERSCAN_API_KEY=""
 
-# Check if PRIVATE_KEY is set
-if [ -z "$PRIVATE_KEY" ]; then
-    echo "❌ Error: PRIVATE_KEY not found in .env file!"
-    exit 1
-fi
-
-echo "✅ Environment variables loaded"
-echo "📝 Using gas limit: 50,000,000 (50M gas)"
+echo "✅ Private key configured"
+echo "📝 Using gas limit: 10,000,000 (10M gas)"
 echo "📝 Using gas price: 2,000,000,000 (2 gwei)"
+echo "🔗 Using RPC: https://rpc.ankr.com/filecoin_testnet"
 echo ""
 
 # Deploy with explicit gas settings
 echo "🔧 Deploying contracts with Filecoin-optimized gas settings..."
 
 forge script script/DeployFilecoinCalibration.s.sol:DeployFilecoinCalibration \
-    --rpc-url https://api.calibration.node.glif.io/rpc/v1 \
+    --rpc-url https://rpc.ankr.com/filecoin_testnet \
     --broadcast \
-    --verify \
-    --verifier-url https://api.calibration.node.glif.io/rpc/v1 \
-    --verifier etherscan \
-    --etherscan-api-key $ETHERSCAN_API_KEY \
-    --gas-limit 50000000 \
+    --gas-limit 10000000 \
     --gas-price 2000000000 \
     --legacy
 

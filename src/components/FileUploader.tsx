@@ -32,11 +32,26 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
     embeddingData: null,
     contractData: null
   });
+  const [storedDataIds, setStoredDataIds] = useState<any[]>([]);
   
   const inputRef = useRef<HTMLInputElement>(null);
   const walrusService = useRef<WalrusService | null>(null);
   const embeddingService = useRef<EmbeddingService>(new EmbeddingService());
-  const contractService = useRef<ContractService>(new ContractService());
+  const contractService = useRef<ContractService>(new ContractService('https://sepolia.base.org'));
+
+  // Load stored Data IDs from localStorage
+  const loadStoredDataIds = useCallback(() => {
+    try {
+      const stored = localStorage.getItem('storedDataIds');
+      if (stored) {
+        const parsedData = JSON.parse(stored);
+        setStoredDataIds(parsedData);
+        console.log('📁 Loaded stored Data IDs:', parsedData.length);
+      }
+    } catch (error) {
+      console.error('❌ Failed to load stored Data IDs:', error);
+    }
+  }, []);
 
   // Initialize Walrus service with your SUI address
   React.useEffect(() => {
@@ -45,6 +60,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
         // Initialize with balance checking
         walrusService.current = await WalrusService.createWithKeypair();
         console.log('✅ Walrus service initialized successfully');
+        
+        // Load stored Data IDs
+        loadStoredDataIds();
       } catch (error) {
         console.error('❌ Failed to initialize Walrus service:', error);
         setError('Failed to initialize Walrus service. Please check console for details.');
@@ -52,7 +70,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
     };
     
     initService();
-  }, []);
+  }, [loadStoredDataIds]);
 
   // Handle drag events
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -174,6 +192,27 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
           processingType
         }
       };
+
+      // Store Data ID in localStorage
+      const currentStoredDataIds = JSON.parse(localStorage.getItem('storedDataIds') || '[]');
+      const newDataIdEntry = {
+        dataId: embeddingResponse.data_id,
+        fileName: selectedFile.name,
+        timestamp: new Date().toISOString(),
+        processingType,
+        blobId: walrusFile.blobId
+      };
+      
+      // Check if this data ID already exists to avoid duplicates
+      const existingIndex = currentStoredDataIds.findIndex((entry: any) => entry.dataId === embeddingResponse.data_id);
+      if (existingIndex === -1) {
+        currentStoredDataIds.push(newDataIdEntry);
+        localStorage.setItem('storedDataIds', JSON.stringify(currentStoredDataIds));
+        setStoredDataIds(currentStoredDataIds);
+        console.log('✅ Data ID stored in localStorage:', embeddingResponse.data_id);
+      } else {
+        console.log('ℹ️ Data ID already exists in localStorage:', embeddingResponse.data_id);
+      }
 
       // Step 3: Register in smart contract
       setUploadProgress({
@@ -714,6 +753,95 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
                         Copy Dataset ID
                       </button>
                     )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Stored Data IDs List */}
+        {storedDataIds.length > 0 && (
+          <div className="p-8 border-t" style={{ background: '#f0f8ff', borderTop: '1px solid #000000' }}>
+            <h3 className="text-2xl font-bold mb-6 flex items-center">
+              <File className="h-6 w-6 mr-3" style={{ color: '#000000' }} />
+              Stored Data IDs ({storedDataIds.length})
+            </h3>
+            <div className="space-y-4">
+              {storedDataIds.map((entry, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-6 border"
+                  style={{ 
+                    background: '#ffffff', 
+                    border: '1px solid #000000',
+                    borderBottom: index < storedDataIds.length - 1 ? '1px solid #cccccc' : '1px solid #000000'
+                  }}
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 border flex items-center justify-center" style={{ background: '#22c55e', color: '#ffffff' }}>
+                      <File className="h-6 w-6" style={{ color: '#ffffff' }} />
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold">{entry.fileName}</p>
+                      <p className="text-sm text-gray">
+                        Data ID: {entry.dataId}
+                      </p>
+                      <p className="text-xs text-gray">
+                        Processed: {new Date(entry.timestamp).toLocaleString()} • Type: {entry.processingType}
+                      </p>
+                      {entry.blobId && (
+                        <p className="text-xs text-blue-600 font-medium">
+                          Blob ID: {entry.blobId.substring(0, 20)}...
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(entry.dataId);
+                        // You could add a toast notification here
+                      }}
+                      className="px-4 py-2 border text-sm"
+                      style={{ 
+                        background: '#22c55e', 
+                        border: '1px solid #000000',
+                        color: '#ffffff'
+                      }}
+                    >
+                      Copy Data ID
+                    </button>
+                    {entry.blobId && (
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(entry.blobId);
+                        }}
+                        className="px-4 py-2 border text-sm"
+                        style={{ 
+                          background: '#3b82f6', 
+                          border: '1px solid #000000',
+                          color: '#ffffff'
+                        }}
+                      >
+                        Copy Blob ID
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        const updatedIds = storedDataIds.filter((_, i) => i !== index);
+                        localStorage.setItem('storedDataIds', JSON.stringify(updatedIds));
+                        setStoredDataIds(updatedIds);
+                      }}
+                      className="px-4 py-2 border text-sm"
+                      style={{ 
+                        background: '#ef4444', 
+                        border: '1px solid #000000',
+                        color: '#ffffff'
+                      }}
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               ))}

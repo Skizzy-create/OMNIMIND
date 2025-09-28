@@ -1,36 +1,28 @@
 #!/bin/bash
 
-# Simple Filecoin Testnet Deployment
-echo "🚀 Deploying to Filecoin Testnet..."
+# Simple deployment to Filecoin Calibration Testnet
+set -e
 
-# Set environment variables
-export PRIVATE_KEY="41c80d358529c1ecddb851ef91cc44739bf7cac3f2910147e791f815b623312c"
-export FILECOIN_RPC_URL="https://rpc.ankr.com/filecoin_testnet"
+echo "🚀 Deploying dAI-Vault to Filecoin Calibration Testnet (Simple)"
+echo "==============================================================="
 
-# Get deployer address
-DEPLOYER_ADDRESS=$(cast wallet address --private-key $PRIVATE_KEY)
-echo "Deployer Address: $DEPLOYER_ADDRESS"
+# Set private key with 0x prefix
+export PRIVATE_KEY="0x41c80d358529c1ecddb851ef91cc44739bf7cac3f2910147e791f815b623312c"
 
-# Check balance
-BALANCE=$(cast balance $DEPLOYER_ADDRESS --rpc-url $FILECOIN_RPC_URL)
-BALANCE_ETH=$(cast --to-unit $BALANCE ether)
-echo "Balance: $BALANCE_ETH ETH"
+echo "✅ Private key configured"
+echo "🔗 Using RPC: https://rpc.ankr.com/filecoin_testnet"
+echo ""
 
-# Check chain ID
-CHAIN_ID=$(cast chain-id --rpc-url $FILECOIN_RPC_URL)
-echo "Chain ID: $CHAIN_ID"
+# Deploy without explicit gas settings - let Forge estimate
+echo "🔧 Deploying contracts with automatic gas estimation..."
 
-# Compile contracts
-echo "🔨 Compiling contracts..."
-forge build
-
-# Deploy contracts
-echo "🚀 Deploying contracts..."
-forge script script/DeployFilecoinTestnet.s.sol:DeployFilecoinTestnet \
-    --rpc-url $FILECOIN_RPC_URL \
+forge script script/DeployFilecoinCalibration.s.sol:DeployFilecoinCalibration \
+    --rpc-url https://rpc.ankr.com/filecoin_testnet \
     --broadcast \
-    --verify \
-    --slow \
     --legacy
 
+echo ""
 echo "✅ Deployment completed!"
+echo "📋 Check the broadcast folder for deployment details"
+echo "🔗 View your contracts on Filecoin Calibration Explorer:"
+echo "   https://calibration.filscan.io/"

@@ -1,4 +1,4 @@
-# Filecoin Testnet Deployment Summary
+# OmniMind Filecoin Testnet Deployment Summary
 
 ## ✅ Deployment Successful!
 
@@ -67,4 +67,4 @@ const CONTRACT_ADDRESSES = {
 
 ## 🎉 Deployment Complete!
 
-All contracts have been successfully deployed to Filecoin testnet and are ready for integration with your dAI-Vault application!
+All contracts have been successfully deployed to Filecoin testnet and are ready for integration with your OmniMind application!

@@ -1,10 +1,10 @@
-# OmniMind Protocol
+# OmniMind
 
 Web3's Universal Knowledge Infrastructure Layer - A modern React frontend for uploading files to Walrus decentralized storage with drag & drop functionality, progress tracking, and comprehensive file management.
 
 ## Features
 
-- **Pitch Deck Presentation**: Interactive presentation with 5 key slides covering the OmniMind Protocol vision
+- **Pitch Deck Presentation**: Interactive presentation with 5 key slides covering the OmniMind vision
 - **Drag & Drop File Upload**: Intuitive file upload with visual feedback
 - **Walrus Integration**: Complete integration with Walrus decentralized storage
 - **Progress Tracking**: Real-time upload progress through all phases
@@ -15,7 +15,7 @@ Web3's Universal Knowledge Infrastructure Layer - A modern React frontend for up
 ## Project Structure
 
 ```
-omnimind-protocol/
+omnimind/
 ├── src/
 │   ├── components/
 │   │   ├── FileUploader.tsx    # Main upload component
