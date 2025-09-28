@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import FileUploader from './components/FileUploader';
 import WalletConnect from './components/WalletConnect';
+import DataMarketplace from './components/DataMarketplace';
 import { walrusClient, WalrusFile } from './services/walrusService';
 import './App.css';
 
 function App() {
   const [totalUploads, setTotalUploads] = useState(0);
+  const [currentPage, setCurrentPage] = useState<'upload' | 'marketplace'>('upload');
 
   // Test Walrus service on component mount
   useEffect(() => {
@@ -29,11 +31,46 @@ function App() {
   return (
     <div className="min-h-screen" style={{ minHeight: '100vh', background: '#ffffff', color: '#000000' }}>
       {/* Header */}
-      <header style={{ background: '#ffffff', borderBottom: '1px solid #000000' }}>
+      <header style={{ background: '#ffffff', borderBottom: '1px solid #000000',  margin: '20 auto', padding: '20px'}}>
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex justify-between items-start mb-8">
-            {/* Left side - empty for now */}
-            <div></div>
+            {/* Left side - Navigation */}
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setCurrentPage('upload')}
+                className={`px-6 py-2 border font-semibold ${
+                  currentPage === 'upload' 
+                    ? 'bg-black text-white' 
+                    : 'bg-white text-black hover:bg-gray-50'
+                }`}
+                style={{
+                  background: currentPage === 'upload' ? '#000000' : '#ffffff',
+                  color: currentPage === 'upload' ? '#ffffff' : '#000000',
+                  border: '1px solid #000000',
+                  padding: '0.5rem 1.5rem',
+                  fontWeight: '600'
+                }}
+              >
+                Upload Files
+              </button>
+              <button
+                onClick={() => setCurrentPage('marketplace')}
+                className={`px-6 py-2 border font-semibold ${
+                  currentPage === 'marketplace' 
+                    ? 'bg-black text-white' 
+                    : 'bg-white text-black hover:bg-gray-50'
+                }`}
+                style={{
+                  background: currentPage === 'marketplace' ? '#000000' : '#ffffff',
+                  color: currentPage === 'marketplace' ? '#ffffff' : '#000000',
+                  border: '1px solid #000000',
+                  padding: '0.5rem 1.5rem',
+                  fontWeight: '600'
+                }}
+              >
+                Data Marketplace
+              </button>
+            </div>
             
             {/* Right side - Wallet Connect Button */}
             <div>
@@ -41,81 +78,22 @@ function App() {
             </div>
           </div>
           <div className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              <div 
-                className="w-12 h-12 border flex items-center justify-center mr-4"
-                style={{
-                  width: '3rem',
-                  height: '3rem',
-                  background: '#000000',
-                  color: '#ffffff',
-                  border: '1px solid #000000',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: '1rem'
-                }}
-              >
-                <svg 
-                  className="w-8 h-8" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                  style={{ width: '2rem', height: '2rem', color: '#ffffff' }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-              </div>
-              <h1 
-                className="text-4xl font-bold"
-                style={{
-                  fontSize: '3rem',
-                  fontWeight: 'bold',
-                  color: '#000000',
-                  margin: 0
-                }}
-              >
-                Walrus Storage
-              </h1>
-            </div>
-            <p 
-              className="text-xl mb-8 max-w-2xl mx-auto"
-              style={{
-                fontSize: '1.25rem',
-                color: '#000000',
-                marginBottom: '2rem',
-                maxWidth: '42rem',
-                margin: '0 auto 2rem auto'
-              }}
-            >
-              Decentralized file storage powered by Walrus Protocol
-            </p>
+           
+         
             
-            {/* Stats */}
-            <div className="flex justify-center space-x-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold">{totalUploads}</div>
-                <div className="text-sm text-gray">Files Uploaded</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold">∞</div>
-                <div className="text-sm text-gray">Storage Limit</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold">100%</div>
-                <div className="text-sm text-gray">Decentralized</div>
-              </div>
-            </div>
+         
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-8">
-        <FileUploader onUploadComplete={handleUploadComplete} />
-        
-        {/* Features Section */}
-        <div className="mt-16 grid md:grid-cols-2 gap-8">
+        {currentPage === 'upload' ? (
+          <>
+            <FileUploader onUploadComplete={handleUploadComplete} />
+            
+            {/* Features Section */}
+            <div className="mt-16 grid md:grid-cols-2 gap-8">
           {/* Features Card */}
           <div className="border p-8" style={{ background: '#ffffff', border: '1px solid #000000' }}>
             <div className="flex items-center mb-6">
@@ -200,15 +178,19 @@ function App() {
               </div>
             </div>
           </div>
-        </div>
+            </div>
 
-        {/* Footer */}
-        <footer className="mt-16 text-center py-8">
-          <p className="text-gray">
-            Powered by <span className="font-semibold">Walrus Protocol</span> • 
-            Built on <span className="font-semibold">Sui Blockchain</span>
-          </p>
-        </footer>
+            {/* Footer */}
+            <footer className="mt-16 text-center py-8">
+              <p className="text-gray">
+                Powered by <span className="font-semibold">Walrus Protocol</span> • 
+                Built on <span className="font-semibold">Sui Blockchain</span>
+              </p>
+            </footer>
+          </>
+        ) : (
+          <DataMarketplace />
+        )}
       </main>
     </div>
   );

@@ -20,6 +20,10 @@ export interface WalrusFile {
   uploadTime: Date;
   uploadedAt?: Date;
   url?: string;
+  embeddingData?: {
+    data_id: string;
+    processingType: 'fast' | 'slow';
+  };
 }
 
 // Walrus Service class

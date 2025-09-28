@@ -1,9 +1,17 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { Upload, File, X, CheckCircle, AlertCircle, Download } from 'lucide-react';
+import { Upload, File, X, CheckCircle, AlertCircle, Download, Zap, Clock } from 'lucide-react';
 import { WalrusService, UploadProgress, WalrusFile } from '../services/walrusService';
+import { EmbeddingService, EmbeddingResponse } from '../services/embeddingService';
+import { ethers } from 'ethers';
 
 interface FileUploaderProps {
-  onUploadComplete?: (file: WalrusFile) => void;
+  onUploadComplete?: (file: WalrusFile, embeddingData?: EmbeddingResponse) => void;
+}
+
+interface ProcessingState {
+  isProcessing: boolean;
+  processingType: 'fast' | 'slow' | null;
+  embeddingData: EmbeddingResponse | null;
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
@@ -13,9 +21,15 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
   const [uploadedFiles, setUploadedFiles] = useState<WalrusFile[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [processingState, setProcessingState] = useState<ProcessingState>({
+    isProcessing: false,
+    processingType: null,
+    embeddingData: null
+  });
   
   const inputRef = useRef<HTMLInputElement>(null);
   const walrusService = useRef<WalrusService | null>(null);
+  const embeddingService = useRef<EmbeddingService>(new EmbeddingService());
 
   // Initialize Walrus service with your SUI address
   React.useEffect(() => {
@@ -65,14 +79,127 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
     }
   }, []);
 
-  // Handle file upload
-  const handleUpload = useCallback(async () => {
+  // Handle file upload with embedding processing
+  const handleUploadWithEmbedding = useCallback(async (processingType: 'fast' | 'slow') => {
     if (!selectedFile) {
       setError('Please select a file first');
       return;
     }
 
     // Check if service is initialized
+    if (!walrusService.current) {
+      setError('Walrus service is not initialized yet. Please wait...');
+      return;
+    }
+
+    setUploading(true);
+    setProcessingState({
+      isProcessing: true,
+      processingType,
+      embeddingData: null
+    });
+    setError(null);
+    setUploadProgress(null);
+
+    try {
+      // Step 1: Upload to Walrus
+      const walrusFile = await walrusService.current.uploadFile(
+        selectedFile,
+        (progress) => {
+          setUploadProgress(progress);
+        }
+      );
+
+      // Convert file to keccak data hash
+      const dataset = JSON.stringify(walrusFile);
+      const datasetHash = ethers.keccak256(ethers.toUtf8Bytes(dataset));
+      console.log('Dataset Hash:', datasetHash);
+
+      // Step 2: Test connectivity and extract text from file
+      setUploadProgress({
+        loaded: 100,
+        total: 100,
+        percentage: 100,
+        progress: 100,
+        message: 'Testing connectivity...',
+        phase: 'Embedding'
+      });
+
+      // Test connectivity first
+      const isConnected = await embeddingService.current.testConnectivity();
+      if (!isConnected) {
+        throw new Error('Cannot connect to embedding service. Please check if the server is running and accessible.');
+      }
+
+      setUploadProgress({
+        loaded: 100,
+        total: 100,
+        percentage: 100,
+        progress: 100,
+        message: 'Processing embeddings...',
+        phase: 'Embedding'
+      });
+
+      const textContent = await embeddingService.current.extractTextFromFile(selectedFile);
+      const texts = textContent.split('\n').filter(line => line.trim().length > 0);
+
+      console.log('Extracted texts for embedding:', texts);
+
+      let embeddingResponse: EmbeddingResponse;
+      if (processingType === 'fast') {
+        embeddingResponse = await embeddingService.current.embedSmall({
+          texts: texts.slice(0, 10), // Limit for fast processing
+          batch_size: 64
+        });
+      } else {
+        embeddingResponse = await embeddingService.current.embedLarge({
+          texts,
+          batch_size: 32
+        });
+      }
+
+      // Add embedding data to walrus file
+      const walrusFileWithEmbedding = {
+        ...walrusFile,
+        embeddingData: {
+          data_id: embeddingResponse.data_id,
+          processingType
+        }
+      };
+
+      setProcessingState({
+        isProcessing: false,
+        processingType: null,
+        embeddingData: embeddingResponse
+      });
+
+      setUploadedFiles(prev => [walrusFileWithEmbedding, ...prev]);
+      setSelectedFile(null);
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
+      
+      onUploadComplete?.(walrusFileWithEmbedding, embeddingResponse);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Upload failed');
+      setProcessingState({
+        isProcessing: false,
+        processingType: null,
+        embeddingData: null
+      });
+    } finally {
+      setUploading(false);
+      setUploadProgress(null);
+    }
+  }, [selectedFile, onUploadComplete]);
+
+  // Handle simple upload without embedding (fallback)
+  const handleUpload = useCallback(async () => {
+    if (!selectedFile) {
+      setError('Please select a file first');
+      return;
+    }
+
     if (!walrusService.current) {
       setError('Walrus service is not initialized yet. Please wait...');
       return;
@@ -89,6 +216,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
           setUploadProgress(progress);
         }
       );
+
+      const dataset = JSON.stringify(walrusFile);
+      const datasetHash = ethers.keccak256(ethers.toUtf8Bytes(dataset));
+      console.log('Dataset Hash:', datasetHash);
 
       setUploadedFiles(prev => [walrusFile, ...prev]);
       setSelectedFile(null);
@@ -163,7 +294,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
                 marginBottom: '0.5rem'
               }}
             >
-              Upload to Walrus
+              Upload Dataset to DAIVault
             </h2>
             <p 
               className="text-gray"
@@ -281,25 +412,75 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
                 </button>
               </div>
 
-              <button
-                onClick={handleUpload}
-                disabled={uploading}
-                className="w-full btn py-3 px-6 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  background: uploading ? '#666666' : '#000000',
-                  color: '#ffffff',
-                  border: '1px solid #000000'
-                }}
-              >
-                {uploading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="spinner mr-2"></div>
-                    Uploading...
-                  </div>
-                ) : (
-                  'Upload to Walrus'
-                )}
-              </button>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleUploadWithEmbedding('fast')}
+                    disabled={uploading}
+                    className="flex items-center justify-center py-3 px-4 font-semibold disabled:opacity-50 disabled:cursor-not-allowed border"
+                    style={{
+                      background: uploading && processingState.processingType === 'fast' ? '#666666' : '#22c55e',
+                      color: '#ffffff',
+                      border: '1px solid #000000'
+                    }}
+                  >
+                    {uploading && processingState.processingType === 'fast' ? (
+                      <div className="flex items-center">
+                        <div className="spinner mr-2"></div>
+                        Processing...
+                      </div>
+                    ) : (
+                      <div className="flex items-center">
+                        <Zap className="h-4 w-4 mr-2" />
+                        Fast Route
+                      </div>
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={() => handleUploadWithEmbedding('slow')}
+                    disabled={uploading}
+                    className="flex items-center justify-center py-3 px-4 font-semibold disabled:opacity-50 disabled:cursor-not-allowed border"
+                    style={{
+                      background: uploading && processingState.processingType === 'slow' ? '#666666' : '#3b82f6',
+                      color: '#ffffff',
+                      border: '1px solid #000000'
+                    }}
+                  >
+                    {uploading && processingState.processingType === 'slow' ? (
+                      <div className="flex items-center">
+                        <div className="spinner mr-2"></div>
+                        Processing...
+                      </div>
+                    ) : (
+                      <div className="flex items-center">
+                        <Clock className="h-4 w-4 mr-2" />
+                        Slow Route
+                      </div>
+                    )}
+                  </button>
+                </div>
+                
+                <button
+                  onClick={handleUpload}
+                  disabled={uploading}
+                  className="w-full btn py-2 px-4 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed border"
+                  style={{
+                    background: uploading && !processingState.isProcessing ? '#666666' : '#f3f4f6',
+                    color: '#000000',
+                    border: '1px solid #000000'
+                  }}
+                >
+                  {uploading && !processingState.isProcessing ? (
+                    <div className="flex items-center justify-center">
+                      <div className="spinner mr-2"></div>
+                      Uploading...
+                    </div>
+                  ) : (
+                    'Upload to Walrus Only'
+                  )}
+                </button>
+              </div>
             </div>
           )}
 
@@ -363,6 +544,11 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
                       <p className="text-xs text-gray">
                         Uploaded: {file.uploadedAt?.toLocaleString()}
                       </p>
+                      {file.embeddingData && (
+                        <p className="text-xs text-green-600 font-medium">
+                          Data ID: {file.embeddingData.data_id} ({file.embeddingData.processingType})
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -394,8 +580,25 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUploadComplete }) => {
                         color: '#000000'
                       }}
                     >
-                      Copy ID
+                      Copy Blob ID
                     </button>
+                    {file.embeddingData && (
+                      <button
+                        onClick={() => {
+                          if (file.embeddingData?.data_id) {
+                            navigator.clipboard.writeText(file.embeddingData.data_id);
+                          }
+                        }}
+                        className="px-4 py-2 border text-sm"
+                        style={{ 
+                          background: '#22c55e', 
+                          border: '1px solid #000000',
+                          color: '#ffffff'
+                        }}
+                      >
+                        Copy Data ID
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
